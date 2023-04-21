@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Text,
   View,
+  ScrollView,
 } from 'react-native';
 import WebView from 'react-native-webview';
 const height = Dimensions.get('window').height;
@@ -19,82 +20,114 @@ const App = () => {
   const [toggleModal, setToggleModal] = React.useState(false);
   const [url, setURL] = React.useState('');
   const [current, setCurrent] = React.useState('');
+  const [pre, setPrev] = React.useState('');
+  const [next, setNext] = React.useState('');
 
-  const Toggle = url => {
+  const Toggle = (url,playing,pre,nex) => {
     setURL(url);
+    setCurrent(playing);
+    setPrev(pre);
+    setNext(nex);
     setToggleModal(true);
   };
-  const Ch1 =
-    'https://feeds.intoday.in/livetv/?id=livetv-at&amp;aud_togle=1&amp;utm_medium=web&amp;utm_source=live_tv_page&amp;v=1.4';
-  // const Ch2 =
-  //   'https://www.mxplayer.in/live-tv/abp-news-live-channel-7014abpnewsin';
-  const Ch2 =
-    'https://cdn.abplive.com/LiveStreams/260118/abplive/streaming.html';
-  // const Ch3 = 'https://zeenews.india.com/live-tv/embed#autoplay';
-  const Ch3 =
-    'https://zeenews.india.com/hindi/news/live-tv.html?videoId=183&title=Zee%20News&extraParam1=Zee%20News&extraParam2=https://zeenews.india.com/hindi/';
-    const Ch4 =
-    "https://www.youtube.com/embed/qfrocHBy6RQ";
-  const Ch5 =
-    'https://d26idhjf0y1p2g.cloudfront.net/out/v1/cd66dd25b9774cb29943bab54bbf3e2f/index.m3u8';
-  const Ch6 =
-    'https://d2vfwvjxwtwq1t.cloudfront.net/out/v1/6b24239d5517495b986e7705490c6e65/index.m3u8';
 
-    const Ch7 =
-    "https://www.youtube.com/embed/cNfVYiNlhGs?autoplay=1&controls=0&showinfo=0&autohide=1";
-    const Ch8 =
-    // "https://www.youtube.com/embed/Xmm3Kr5P1Uw?autoplay=1&mute=1&enablejsapi=1";
-    "https://www.youtube.com/embed/Xmm3Kr5P1Uw?autoplay=1&controls=0&showinfo=0&autohide=0&rel=0";
+const data = [
+  {
+    id:1,
+    name:'Aaj Tak',
+    url:'https://feeds.intoday.in/livetv/?id=livetv-at&amp;aud_togle=1&amp;utm_medium=web&amp;utm_source=live_tv_page&amp;v=1.4',
+    image:require('./Aaj_tak_logo.png')
+  },
+  {
+    id:2,
+    name:'ABP News',
+    url:'https://cdn.abplive.com/LiveStreams/260118/abplive/streaming.html',
+    image:require('./abpnews.png')
+  },
+  {
+    id:3,
+    name:'Z News',
+    // url:'https://zeenews.india.com/hindi/news/live-tv.html?videoId=183&title=Zee%20News&extraParam1=Zee%20News&extraParam2=https://zeenews.india.com/hindi/',
+    url:'https://zeenews.india.com/hindi/news/live-tv.html?videoId=183&autoplay=1',
+    image:require('./znews.png')
+  },
+  {
+    id:4,
+    name:'R Bharat',
+    url:'https://www.youtube.com/embed/qfrocHBy6RQ',
+    image:require('./rbharat.png')
+  },
+  {
+    id:5,
+    name:'India TV',
+    url:'https://www.youtube.com/embed/Xmm3Kr5P1Uw?autoplay=1&controls=0&showinfo=0&autohide=0&rel=0',
+    image:require('./indiatv.png')
+  },
+  {
+    id:6,
+    name:'Sanskar',
+    url:'https://d26idhjf0y1p2g.cloudfront.net/out/v1/cd66dd25b9774cb29943bab54bbf3e2f/index.m3u8',
+    image:require('./sanskar.png')
+  },
+  {
+    id:7,
+    name:'Satsang',
+    url:'https://d2vfwvjxwtwq1t.cloudfront.net/out/v1/6b24239d5517495b986e7705490c6e65/index.m3u8',
+    image:require('./satsang.png')
+  },
+  // {
+  //   id:8,
+  //   name:'Astha',
+  //   url:'https://www.youtube.com/embed/cNfVYiNlhGs?autoplay=1&controls=0&showinfo=0&autohide=1',
+  //   image:require('./astha.png')
+  // },
+]
+
 
   const leftButton = () => {
-    if (url == Ch1) {
-      setURL(Ch8);
-    } else if (url == Ch2) {
-      setURL(Ch1);
-    } else if(url==Ch3) {
-      setURL(Ch2);
-    }else if(url==Ch4){
-      setURL(Ch3)
-    }else if(url==Ch5){
-      setURL(Ch4)
-    }else if(url==Ch6){
-      setURL(Ch5)
-    }else if(url==Ch7){
-      setURL(Ch6)
+    if(pre==-1){
+      const newIndex = data.length-1;
+      setURL(data[newIndex].url);
+      setNext(pre);
+       setCurrent(newIndex);
+       setPrev(newIndex-1);
     }else{
-      setURL(Ch7)
+      setURL(data[pre].url);
+      setNext(current);
+      setCurrent(pre);
+      setPrev(pre-1);
     }
   };
 
   const rightButton = () => {
-    if (url == Ch1) {
-      setURL(Ch2);
-    } else if (url == Ch2) {
-      setURL(Ch3);
-    } else if(url==Ch3) {
-      setURL(Ch4);
-    }else if(url==Ch4) {
-      setURL(Ch5);
-    }else if(url==Ch5) {
-      setURL(Ch6);
-    }else if(url==Ch6) {
-      setURL(Ch7);
-    }else if(url==Ch7){
-      setURL(Ch8)
+    const i = data.length;
+    if(next==i){
+      setURL(data[0].url);
+      setNext(1);
+       setCurrent(0);
+       setPrev(i-1);
     }else{
-      setURL(Ch1)
+      setURL(data[next].url);
+      setCurrent(next);
+      setPrev(current);
+      setNext(next+1);
     }
   };
   const script = `var promise = document.querySelector('video').play();
 
-if (promise !== undefined) {
-  promise.then(_ => {
-    // Autoplay started!
-  }).catch(error => {
-    // Autoplay was prevented.
-    // Show a "Play" button so that user can start playback.
-  });
-}`;
+          if (promise !== undefined) {
+            promise.then(_ => {
+              // Autoplay started!
+            }).catch(error => {
+              // Autoplay was prevented.
+              // Show a "Play" button so that user can start playback.
+            });
+          }
+         
+          document.getElementsByClassName('ytp-large-play-button ytp-button ytp-large-play-button-red-bg')[0].click();
+
+          `;
+
 
   return (
     <SafeAreaView style={styles.Maincontainer}>
@@ -105,6 +138,8 @@ if (promise !== undefined) {
         onRequestClose={() => {
           setURL('');
           setCurrent('');
+          setPrev('');
+          setNext('');
           setToggleModal(false);
         }}>
         <WebView
@@ -149,105 +184,29 @@ if (promise !== undefined) {
       </Modal>
 
       <View style={styles.tilesContainer}>
-        <TouchableOpacity
-         activeOpacity={0.9}
-          style={styles.tile}
-          onPress={() => {
-            Toggle(Ch1);
-          }}>
-          <Image
-            source={require('./Aaj_tak_logo.png')}
-            style={{height: '60%', width: '90%', resizeMode: 'stretch'}}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-         activeOpacity={0.9}
-          style={styles.tile}
-          onPress={() => {
-            Toggle(Ch2);
-          }}>
-          <Image
-            source={require('./abpnews.png')}
-            style={{height: '100%', width: '100%', resizeMode: 'cover'}}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-         activeOpacity={0.9}
-          style={styles.tile}
-          onPress={() => {
-            Toggle(Ch3);
-          }}>
-          <Image
-            source={require('./znews.png')}
-            style={{height: '80%', width: '90%', resizeMode: 'stretch'}}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-         activeOpacity={0.9}
-          style={styles.tile}
-          onPress={() => {
-            Toggle(Ch4);
-          }}>
-          <Image
-            source={require('./rbharat.png')}
-            style={{height: '100%', width: '100%', resizeMode: 'contain'}}
-          />
-        </TouchableOpacity>
-       
+        <ScrollView horizontal={true} style={{width:'100%'}} >
+        {data.map((item,index)=>{
+          return(
+            <TouchableOpacity
+            key={index}
+            activeOpacity={0.9}
+            style={styles.tile}
+            onPress={() => {
+              Toggle(item.url,index,index-1,index+1);
+            }}>
+              <Image
+                source={item.image}
+                style={{height: '60%', width: '90%', resizeMode: 'stretch'}}
+                />
+                <Text style={{color:'#212121',fontWeight:'bold',fontSize:18}}>
+                  {item.name}
+                </Text>
+            </TouchableOpacity>
+            )
+          })}
+        </ScrollView>
       </View>
 
-
-      <View style={styles.tilesContainer}>
-      <TouchableOpacity
-         activeOpacity={0.9}
-          style={styles.tile}
-          onPress={() => {
-            Toggle(Ch5);
-          }}>
-          <Image
-            source={require('./sanskar.png')}
-            style={{height: '80%', width: '90%', resizeMode: 'contain'}}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-        activeOpacity={0.9}
-          style={styles.tile}
-          onPress={() => {
-            Toggle(Ch6);
-          }}>
-          <Image
-            source={require('./satsang.png')}
-            style={{height: '60%', width: '90%', resizeMode: 'contain'}}
-          />
-        </TouchableOpacity>
-
-       
-
-        <TouchableOpacity
-         activeOpacity={0.9}
-          style={styles.tile}
-          onPress={() => {
-            Toggle(Ch7);
-          }}>
-          <Image
-            source={require('./astha.png')}
-            style={{height: '80%', width: '90%', resizeMode: 'contain'}}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-         activeOpacity={0.9}
-          style={styles.tile}
-          onPress={() => {
-            Toggle(Ch8);
-          }}>
-          <Image
-            source={require('./indiatv.png')}
-            style={{height: '80%', width: '90%', resizeMode: 'contain'}}
-          />
-        </TouchableOpacity>
-      </View>
     </SafeAreaView>
   );
 };
@@ -269,12 +228,13 @@ const styles = StyleSheet.create({
     marginBottom:e/2,
   },
   tile: {
-    height: e * 1.5,
-    width: e * 1.5,
+    height: e * 2,
+    width: e * 2,
     backgroundColor: 'white',
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
+    marginHorizontal:10
   },
 });
