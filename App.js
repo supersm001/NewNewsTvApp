@@ -12,16 +12,30 @@ import {
   ScrollView,
 } from 'react-native';
 import WebView from 'react-native-webview';
+import { getChannels } from './apis';
 const height = Dimensions.get('window').height;
 const width = Dimensions.get('window').width;
 const e = width / 10;
 
 const App = () => {
+  const [data,setData]=React.useState([]);
   const [toggleModal, setToggleModal] = React.useState(false);
   const [url, setURL] = React.useState('');
   const [current, setCurrent] = React.useState('');
   const [pre, setPrev] = React.useState('');
   const [next, setNext] = React.useState('');
+
+React.useEffect(()=>{
+  getData();
+},[])
+
+  async function getData(){
+    const res = await getChannels();
+    setData(res);
+  }
+
+
+
 
   const Toggle = (url,playing,pre,nex) => {
     setURL(url);
@@ -31,57 +45,57 @@ const App = () => {
     setToggleModal(true);
   };
 
-const data = [
-  {
-    id:1,
-    name:'Aaj Tak',
-    url:'https://feeds.intoday.in/livetv/?id=livetv-at&amp;aud_togle=1&amp;utm_medium=web&amp;utm_source=live_tv_page&amp;v=1.4',
-    image:require('./Aaj_tak_logo.png')
-  },
-  {
-    id:2,
-    name:'ABP News',
-    url:'https://cdn.abplive.com/LiveStreams/260118/abplive/streaming.html',
-    image:require('./abpnews.png')
-  },
-  {
-    id:3,
-    name:'Z News',
-    // url:'https://zeenews.india.com/hindi/news/live-tv.html?videoId=183&title=Zee%20News&extraParam1=Zee%20News&extraParam2=https://zeenews.india.com/hindi/',
-    url:'https://zeenews.india.com/hindi/news/live-tv.html?videoId=183&autoplay=1',
-    image:require('./znews.png')
-  },
-  {
-    id:4,
-    name:'R Bharat',
-    url:'https://www.youtube.com/embed/qfrocHBy6RQ',
-    image:require('./rbharat.png')
-  },
-  {
-    id:5,
-    name:'India TV',
-    url:'https://www.youtube.com/embed/Xmm3Kr5P1Uw?autoplay=1&controls=0&showinfo=0&autohide=0&rel=0',
-    image:require('./indiatv.png')
-  },
-  {
-    id:6,
-    name:'Sanskar',
-    url:'https://d26idhjf0y1p2g.cloudfront.net/out/v1/cd66dd25b9774cb29943bab54bbf3e2f/index.m3u8',
-    image:require('./sanskar.png')
-  },
-  {
-    id:7,
-    name:'Satsang',
-    url:'https://d2vfwvjxwtwq1t.cloudfront.net/out/v1/6b24239d5517495b986e7705490c6e65/index.m3u8',
-    image:require('./satsang.png')
-  },
-  // {
-  //   id:8,
-  //   name:'Astha',
-  //   url:'https://www.youtube.com/embed/cNfVYiNlhGs?autoplay=1&controls=0&showinfo=0&autohide=1',
-  //   image:require('./astha.png')
-  // },
-]
+// const data = [
+//   {
+//     id:1,
+//     name:'Aaj Tak',
+//     url:'https://feeds.intoday.in/livetv/?id=livetv-at&amp;aud_togle=1&amp;utm_medium=web&amp;utm_source=live_tv_page&amp;v=1.4',
+//     image:require('./Aaj_tak_logo.png')
+//   },
+//   {
+//     id:2,
+//     name:'ABP News',
+//     url:'https://cdn.abplive.com/LiveStreams/260118/abplive/streaming.html',
+//     image:require('./abpnews.png')
+//   },
+//   {
+//     id:3,
+//     name:'Z News',
+//     // url:'https://zeenews.india.com/hindi/news/live-tv.html?videoId=183&title=Zee%20News&extraParam1=Zee%20News&extraParam2=https://zeenews.india.com/hindi/',
+//     url:'https://zeenews.india.com/hindi/news/live-tv.html?videoId=183&autoplay=1',
+//     image:require('./znews.png')
+//   },
+//   {
+//     id:4,
+//     name:'R Bharat',
+//     url:'https://www.youtube.com/embed/qfrocHBy6RQ',
+//     image:require('./rbharat.png')
+//   },
+//   {
+//     id:5,
+//     name:'India TV',
+//     url:'https://www.youtube.com/embed/Xmm3Kr5P1Uw?autoplay=1&controls=0&showinfo=0&autohide=0&rel=0',
+//     image:require('./indiatv.png')
+//   },
+//   {
+//     id:6,
+//     name:'Sanskar',
+//     url:'https://d26idhjf0y1p2g.cloudfront.net/out/v1/cd66dd25b9774cb29943bab54bbf3e2f/index.m3u8',
+//     image:require('./sanskar.png')
+//   },
+//   {
+//     id:7,
+//     name:'Satsang',
+//     url:'https://d2vfwvjxwtwq1t.cloudfront.net/out/v1/6b24239d5517495b986e7705490c6e65/index.m3u8',
+//     image:require('./satsang.png')
+//   },
+//   // {
+//   //   id:8,
+//   //   name:'Astha',
+//   //   url:'https://www.youtube.com/embed/cNfVYiNlhGs?autoplay=1&controls=0&showinfo=0&autohide=1',
+//   //   image:require('./astha.png')
+//   // },
+// ]
 
 
   const leftButton = () => {
@@ -186,20 +200,21 @@ const data = [
       <View style={styles.tilesContainer}>
         <ScrollView horizontal={true} style={{width:'100%'}} >
         {data.map((item,index)=>{
+          let image = require(item.channel_image)
           return(
             <TouchableOpacity
             key={index}
             activeOpacity={0.9}
             style={styles.tile}
             onPress={() => {
-              Toggle(item.url,index,index-1,index+1);
+              Toggle(item.channel_url,index,index-1,index+1);
             }}>
               <Image
-                source={item.image}
+                source={image}
                 style={{height: '60%', width: '90%', resizeMode: 'stretch'}}
                 />
                 <Text style={{color:'#212121',fontWeight:'bold',fontSize:18}}>
-                  {item.name}
+                  {item.channel_name}
                 </Text>
             </TouchableOpacity>
             )
